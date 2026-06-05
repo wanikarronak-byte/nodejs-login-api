@@ -1,43 +1,26 @@
+const connectDB = require("./db");
 const express = require("express");
-const fs = require("fs");
+const cors = require("cors");
+require("dotenv").config();
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.json({
-    message: "Server is running"
-  });
-});
+// Routes
+const loginRoute = require("./routes/login");
+const productRoute = require("./routes/products");
 
-app.post("/login", (req, res) => {
-  const { username, password } = req.body;
+// Use Routes
+app.use("/", loginRoute);
+app.use("/products", productRoute);
 
-  const usersData = JSON.parse(
-    fs.readFileSync("./users.json", "utf8")
-  );
+// MongoDB Connection
+connectDB(process.env.MONGO_URI)
+  .then(() => console.log("✅ MongoDB Connected"))
+  .catch(err => console.log("❌ MongoDB Error:", err));
 
-  const user = usersData.users.find(
-    u => u.username === username && u.password === password
-  );
-
-  if (user) {
-    return res.status(200).json({
-      success: true,
-      message: "Login Successful",
-      user: {
-        username: user.username
-      }
-    });
-  }
-
-  return res.status(401).json({
-    success: false,
-    message: "Invalid Username or Password"
-  });
-});
-
-app.listen(3000, () => {
-  console.log("Server running on port 3000");
+app.listen(5000, () => {
+  console.log("🚀 Server running on port 5000");
 });
