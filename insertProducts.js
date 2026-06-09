@@ -18,7 +18,7 @@ async function insertProducts() {
         description: `Description for Electronic Product ${i}`,
         price: 1000 + i * 500,
         delivery_date: `${(i % 5) + 1} Days`,
-        image: `https://picsum.photos/300?random=${i}`
+        image: `https://picsum.photos/300?elctronic applancies=${i}`
       });
     }
 

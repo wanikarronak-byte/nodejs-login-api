@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
 
+//NEW
+const jwt = require("jsonwebtoken");
+
 const User = require("../Models/User");
 
 // LOGIN API
@@ -47,18 +50,46 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    // Login successful
-    return res.status(200).json({
-      success: true,
-      message: "Login Successful",
-      user: {
-        user_id: user.user_id,
-        username: user.username,
-        email: user.email,
-        first_name: user.first_name,
-        last_name: user.last_name
-      }
-    });
+    //OLD
+    // // Login successful
+    // return res.status(200).json({
+    //   success: true,
+    //   message: "Login Successful",
+    //   user: {
+    //     user_id: user.user_id,
+    //     username: user.username,
+    //     email: user.email,
+    //     first_name: user.first_name,
+    //     last_name: user.last_name
+    //   }
+    // });
+
+    // CREATE TOKEN HERE
+const token = jwt.sign(
+  {
+    id: user._id,
+    username: user.username,
+    email: user.email
+  },
+  "SECRET_KEY_123",
+  { expiresIn: "1h" }
+);
+
+// Login successful
+return res.status(200).json({
+  success: true,
+  message: "Login Successful",
+
+  token: token, // 👈 ADD TOKEN HERE
+
+  user: {
+    user_id: user.user_id,
+    username: user.username,
+    email: user.email,
+    first_name: user.first_name,
+    last_name: user.last_name
+  }
+});
 
   } catch (error) {
     console.log("LOGIN ERROR:", error);
